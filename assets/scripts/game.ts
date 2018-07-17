@@ -1,4 +1,5 @@
 import Ball from "./ball";
+import BoomFactory from "./boomFactory";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -19,30 +20,24 @@ export default class NewClass extends cc.Component {
     ballBody: cc.RigidBody = null;
 
     @property(cc.Node)
-    boomContent: cc.Node = null;
-
-    @property(cc.Node)
     nodeCamera: cc.Node = null;
-
-    @property(cc.Prefab)
-    pfbBoom:cc.Prefab = null;
 
     private forcePower: number = 1000;
 
     private touch: boolean = false;
     private motorJoint: cc.MotorJoint = null;
 
+    private boomFactory: BoomFactory = null;
+
     onLoad() {
         cc.director.getPhysicsManager().enabled = true;
         this.motorJoint = this.ballBody.getComponent(cc.MotorJoint);
+        this.boomFactory = this.getComponent(BoomFactory);
     }
     start() {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
-        
-        let boom = cc.instantiate(this.pfbBoom);
-        boom.parent = this.boomContent;
-        this.ballBody.getComponent(cc.MotorJoint).connectedBody = boom.getComponent(cc.RigidBody);
+        this.boomFactory.createRowBooms();
     }
 
     onTouchStart() {
@@ -54,20 +49,18 @@ export default class NewClass extends cc.Component {
     }
 
     update(dt) {
-        if (this.touch) {
-            // let subPosition = cc.pSub(this.boomBody.node.position, this.ballBody.node.position);
-            // let force = cc.pMult(subPosition.normalizeSelf(), this.forcePower * this.ballBody.getMass());
-            // this.ballBody.applyForceToCenter(force, true);
-            this.motorJoint.maxForce = 100;
-            this.motorJoint.collideConnected = true;
-            this.motorJoint.apply();
-        } else {
-            this.motorJoint.maxForce = 0;
-            this.motorJoint.collideConnected = false;
-            this.motorJoint.apply();
-            this.motorJoint.connectedBody.linearVelocity = cc.Vec2.ZERO;
+        if (this.motorJoint.connectedBody) {
+            if (this.touch) {
+                this.motorJoint.maxForce = 100;
+                this.motorJoint.collideConnected = true;
+                this.motorJoint.apply();
+            } else {
+                this.motorJoint.maxForce = 0;
+                this.motorJoint.collideConnected = false;
+                this.motorJoint.apply();
+                this.motorJoint.connectedBody.linearVelocity = cc.Vec2.ZERO;
+            }
         }
-        // this.nodeCamera.y += 1;
     }
 
 }

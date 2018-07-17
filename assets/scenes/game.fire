@@ -70,6 +70,9 @@
       },
       {
         "__id__": 31
+      },
+      {
+        "__id__": 32
       }
     ],
     "_prefab": null,
@@ -1089,14 +1092,23 @@
     "ballBody": {
       "__id__": 21
     },
-    "boomContent": {
-      "__id__": 25
-    },
     "nodeCamera": {
       "__id__": 27
+    }
+  },
+  {
+    "__type__": "6eb29qyYtlKHrMBkwduVYr1",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 2
     },
+    "_enabled": true,
     "pfbBoom": {
       "__uuid__": "c85e4162-3189-44d2-a8a2-5378a3d87553"
+    },
+    "boomContent": {
+      "__id__": 25
     }
   }
 ]
