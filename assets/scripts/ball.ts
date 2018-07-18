@@ -13,11 +13,25 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class Ball extends cc.Component {
 
-    onBeginContact(contact, a: cc.Collider, b: cc.Collider) {
-        cc.log("onBeginContact", contact)
+    private force: boolean = true;
+
+    onBeginContact(contact: cc.PhysicsContact, a: cc.Collider, b: cc.Collider) {
+        cc.log("onBeginContact");
+        if (b.node.group === "boom") {
+            if(this.force){
+                cc.log("撞击爆炸")
+            } else {
+                cc.log("松手不爆炸");
+                contact.disabled = true;
+            }
+        }
     }
 
     onEndContact(contact: cc.PhysicsContact, a: cc.Collider, b: cc.Collider) {
-        cc.log("onEndContact", contact)
+        cc.log("onEndContact")
+    }
+
+    applyForce(force: boolean) {
+        this.force = force;
     }
 }

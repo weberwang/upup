@@ -30,7 +30,11 @@ export default class BoomFactory extends cc.Component {
     private minGap: number = 10;
     private startY: number = 500;
 
-    private nextRow: number = 1;
+    private nextRow: number = 0;
+
+    public get allBooms(): cc.Node[] {
+        return this.boomContent.children;
+    }
 
     createRowBooms() {
         let count = this.rowCount();
@@ -47,7 +51,7 @@ export default class BoomFactory extends cc.Component {
 
     randomPosition(boom: cc.Node) {
         this.randomX(boom);
-        boom.y = this.startY + this.randomHGap();
+        boom.y = this.startY + this.randomHGap() + this.maxGap * this.nextRow;
         boom.getComponent(Boom).row = this.nextRow;
     }
 
@@ -59,12 +63,12 @@ export default class BoomFactory extends cc.Component {
         return boom;
     }
 
-    private randomX(boom) {
-        boom.x = Math.random() * (cc.winSize.width - boom.width) + boom.width / 2;
+    private randomX(boom: cc.Node) {
+        boom.x = Math.round(Math.random() * (cc.winSize.width - boom.width) + boom.width / 2 - cc.winSize.width / 2);
     }
 
     private randomHGap(): number {
-        return Math.random() * (this.maxGap - this.minGap) + this.minGap;
+        return Math.round(Math.random() * (this.maxGap - this.minGap) + this.minGap);
     }
 
     private rowCount(): number {
