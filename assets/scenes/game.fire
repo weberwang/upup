@@ -66,13 +66,13 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 30
-      },
-      {
         "__id__": 31
       },
       {
         "__id__": 32
+      },
+      {
+        "__id__": 33
       }
     ],
     "_prefab": null,
@@ -215,7 +215,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 29
+        "__id__": 30
       }
     ],
     "_prefab": null,
@@ -979,6 +979,9 @@
     "_components": [
       {
         "__id__": 28
+      },
+      {
+        "__id__": 29
       }
     ],
     "_prefab": null,
@@ -1027,9 +1030,7 @@
     },
     "_enabled": true,
     "_targets": [
-      {
-        "__id__": 3
-      },
+      null,
       {
         "__id__": 25
       },
@@ -1038,6 +1039,15 @@
       }
     ],
     "zoomRatio": 1
+  },
+  {
+    "__type__": "33604ZF6J5PTbhsIR1U6pj5",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 27
+    },
+    "_enabled": true
   },
   {
     "__type__": "cc.Widget",
