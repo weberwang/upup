@@ -26,8 +26,9 @@ export default class BoomFactory extends cc.Component {
     private minRowCount: number = 1;
     private boomPool: cc.Node[] = [];
 
-    private maxGap: number = 50;
-    private minGap: number = 10;
+    private maxGap: number = 200;
+    private minGap: number = 100;
+    private rowGap:number = 30;
     private startY: number = 500;
 
     private nextRow: number = 0;
@@ -36,12 +37,21 @@ export default class BoomFactory extends cc.Component {
         return this.boomContent.children;
     }
 
-    createRowBooms() {
+    startGame() {
+        let last = this.createRowBooms();
+        while (last.y < cc.winSize.height) {
+            last = this.createRowBooms();
+        }
+    }
+
+    createRowBooms(): cc.Node {
         let count = this.rowCount();
+        let last;
         for (let index = 0; index < count; index++) {
-            this.createBoom();
+            last = this.createBoom();
         }
         this.nextRow++;
+        return last;
     }
 
     destroyBoom(boom) {
@@ -72,6 +82,10 @@ export default class BoomFactory extends cc.Component {
     }
 
     private rowCount(): number {
-        return 3;
+        return 2;
+    }
+
+    onCameraUpdate(camera:cc.Node){
+        cc.log(JSON.stringify(cc.Camera.main.getCameraToWorldPoint(camera)));
     }
 }

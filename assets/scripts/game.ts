@@ -40,7 +40,7 @@ export default class NewClass extends cc.Component {
     start() {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
-        this.boomFactory.createRowBooms();
+        this.boomFactory.startGame();
     }
 
     onTouchStart() {
@@ -92,7 +92,7 @@ export default class NewClass extends cc.Component {
             mRow = boom.getComponent(Boom).row;;
             if (findRow == null) {
                 findRow = mRow
-            } else if (mRow !== findRow) {
+            } else if (findRow - mRow > 1) {
                 return nearBoom;
             }
             if (localPosition.y > this.ballBody.node.y) {
