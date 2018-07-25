@@ -13,6 +13,9 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class NewClass extends cc.Component {
 
+    @property({ tooltip: "相机限定区域, 尺寸为负表示不限制" })
+    cameraRect: cc.Rect = new cc.Rect();
+
     @property({ tooltip: "目标显示对象移动相对相机偏移量超过指定大小，相机开始移动,负值忽略" })
     offset: cc.Vec2 = cc.v2();
 
@@ -21,7 +24,6 @@ export default class NewClass extends cc.Component {
 
     @property({ type: cc.Component.EventHandler, tooltip: "相机移动触发的事件" })
     cameraUpdateEvents: cc.Component.EventHandler[] = [];
-
 
     resetInEditor() {
         if (!this.getComponent(cc.Camera)) {
@@ -32,6 +34,13 @@ export default class NewClass extends cc.Component {
     }
 
     start() {
+        this.scheduleOnce(() => {
+            // this.node.position = cc.v2(0, 0);
+        }, 1)
+    }
+
+    lateUpdate() {
+        cc.log("camera position", JSON.stringify(this.node.position));
     }
 
     update() {
@@ -56,7 +65,9 @@ export default class NewClass extends cc.Component {
             move = true;
         }
         if (move) {
-            this.cameraUpdateEvents.forEach((handler:cc.Component.EventHandler)=>{
+            this.node.x = cc.clampf(this.node.x, this.cameraRect.xMin, this.cameraRect.xMax < 0 ? Number.MAX_VALUE : this.cameraRect.xMax);
+            this.node.y = cc.clampf(this.node.y, this.cameraRect.yMin, this.cameraRect.yMax < 0 ? Number.MAX_VALUE : this.cameraRect.yMax);
+            this.cameraUpdateEvents.forEach((handler: cc.Component.EventHandler) => {
                 handler.emit([this.node]);
             })
         }

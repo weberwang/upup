@@ -1062,6 +1062,13 @@
       "__id__": 28
     },
     "_enabled": true,
+    "cameraRect": {
+      "__type__": "cc.Rect",
+      "x": 0,
+      "y": 0,
+      "width": -1,
+      "height": -1
+    },
     "offset": {
       "__type__": "cc.Vec2",
       "x": -1,
