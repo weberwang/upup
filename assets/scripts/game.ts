@@ -12,7 +12,7 @@ import Boom from "./boom";
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class NewClass extends cc.Component {
@@ -31,6 +31,8 @@ export default class NewClass extends cc.Component {
     private boomFactory: BoomFactory = null;
     private ball: Ball = null;
 
+    private isGameover: boolean = false;
+
     onLoad() {
         cc.director.getPhysicsManager().enabled = true;
         this.motorJoint = this.ballBody.getComponent(cc.MotorJoint);
@@ -45,6 +47,7 @@ export default class NewClass extends cc.Component {
     }
 
     onTouchStart() {
+        if (this.isGameover) return;
         this.touch = true;
         let nearBoom = this.findNearestBoom();
         if (!nearBoom) return;
@@ -56,6 +59,7 @@ export default class NewClass extends cc.Component {
     }
 
     onTouchEnd() {
+        if (this.isGameover) return;
         this.touch = false;
         if (!this.motorJoint.connectedBody) return;
         this.motorJoint.connectedBody.active = false;
@@ -69,6 +73,7 @@ export default class NewClass extends cc.Component {
     }
 
     update(dt) {
+        if (this.isGameover) return;
         if (this.touch) {
             if (this.motorJoint.connectedBody) {
                 this.motorJoint.maxForce = 100;
@@ -79,8 +84,9 @@ export default class NewClass extends cc.Component {
 
         let worldPoint = this.ball.node.convertToWorldSpaceAR(cc.Vec2.ZERO);
         let cameraWorldPoint = cc.Camera.main.node.convertToWorldSpaceAR(cc.Vec2.ZERO);
-        if(worldPoint.y < cameraWorldPoint.y - cc.winSize.height/2){
+        if (worldPoint.y < cameraWorldPoint.y - cc.winSize.height / 2) {
             cc.log("游戏结束");
+            this.isGameover = true;
         }
     }
 
@@ -111,7 +117,15 @@ export default class NewClass extends cc.Component {
     }
 
     onCameraUpdate(camera: cc.Node) {
-
+        let cameraWorldPoint = camera.convertToWorldSpaceAR(cc.Vec2.ZERO);
+        //最下层移除屏幕外之后返回对象池
+        for (const boom of this.boomFactory.allBooms) {
+            let boomWorldPoint = boom.convertToWorldSpaceAR(cc.Vec2.ZERO);
+            if (boomWorldPoint.y + cc.winSize.height/2 < cameraWorldPoint.y) {
+                cc.log("boom out");
+            }
+        }
+        //最上层炸弹显示之后需要在创建一层
     }
 
     onPreUpdate(targetWorldPoint: cc.Vec2, cameraWorldPoint: cc.Vec2): boolean {
