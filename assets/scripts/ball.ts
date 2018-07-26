@@ -8,7 +8,7 @@
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const { ccclass, property } = cc._decorator;
+const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class Ball extends cc.Component {
@@ -18,7 +18,7 @@ export default class Ball extends cc.Component {
     onBeginContact(contact: cc.PhysicsContact, a: cc.Collider, b: cc.Collider) {
         cc.log("onBeginContact");
         if (b.node.group === "boom") {
-            if(this.force){
+            if (this.force) {
                 cc.log("撞击爆炸")
             } else {
                 cc.log("松手不爆炸");

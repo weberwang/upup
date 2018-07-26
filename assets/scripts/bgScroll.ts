@@ -13,7 +13,7 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class NewClass extends cc.Component {
 
-    onCameraUpdate(camera:cc.Node){
-        
+    onCameraUpdate(camera: cc.Node) {
+        this.node.y = Math.floor(camera.y / cc.winSize.height) * cc.winSize.height - cc.winSize.height / 2;
     }
 }

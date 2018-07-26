@@ -29,7 +29,7 @@ export default class BoomFactory extends cc.Component {
     private maxGap: number = 200;
     private minGap: number = 100;
     private rowGap:number = 30;
-    private startY: number = 500;
+    private startY: number = 400;
 
     private nextRow: number = 0;
 
@@ -59,7 +59,7 @@ export default class BoomFactory extends cc.Component {
         this.boomPool.push(boom);
     }
 
-    randomPosition(boom: cc.Node) {
+    private randomPosition(boom: cc.Node) {
         this.randomX(boom);
         boom.y = this.startY + this.randomHGap() + this.maxGap * this.nextRow;
         boom.getComponent(Boom).row = this.nextRow;
@@ -83,9 +83,5 @@ export default class BoomFactory extends cc.Component {
 
     private rowCount(): number {
         return 2;
-    }
-
-    onCameraUpdate(camera:cc.Node){
-        cc.log(JSON.stringify(cc.Camera.main.getCameraToWorldPoint(camera)));
     }
 }

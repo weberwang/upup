@@ -12,7 +12,7 @@ import Boom from "./boom";
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const { ccclass, property } = cc._decorator;
+const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class NewClass extends cc.Component {
@@ -37,6 +37,7 @@ export default class NewClass extends cc.Component {
         this.boomFactory = this.getComponent(BoomFactory);
         this.ball = this.ballBody.getComponent(Ball);
     }
+
     start() {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
@@ -74,10 +75,12 @@ export default class NewClass extends cc.Component {
                 this.motorJoint.collideConnected = true;
                 this.motorJoint.apply();
             }
-        } else {
-            // this.motorJoint.maxForce = 0;
-            // this.motorJoint.collideConnected = false;
-            // this.motorJoint.apply();
+        }
+
+        let worldPoint = this.ball.node.convertToWorldSpaceAR(cc.Vec2.ZERO);
+        let cameraWorldPoint = cc.Camera.main.node.convertToWorldSpaceAR(cc.Vec2.ZERO);
+        if(worldPoint.y < cameraWorldPoint.y - cc.winSize.height/2){
+            cc.log("游戏结束");
         }
     }
 
@@ -89,13 +92,14 @@ export default class NewClass extends cc.Component {
         let nearBoom: cc.Node;
         for (const boom of this.boomFactory.allBooms) {
             let localPosition: cc.Vec2 = this.ballBody.node.parent.convertToNodeSpaceAR(boom.convertToWorldSpaceAR(cc.Vec2.ZERO));
-            mRow = boom.getComponent(Boom).row;;
+            mRow = boom.getComponent(Boom).row;
             if (findRow == null) {
                 findRow = mRow
             } else if (findRow - mRow > 1) {
                 return nearBoom;
             }
-            if (localPosition.y > this.ballBody.node.y) {
+            //不处理太近的
+            if (localPosition.y > this.ballBody.node.y && cc.pDistanceSQ(localPosition, this.ball.node.position) >= 200 * 200) {
                 mDis = cc.pDistanceSQ(localPosition, this.ballBody.node.position);
                 if (!distanceSQ || (distanceSQ && distanceSQ > mDis)) {
                     distanceSQ = mDis;
@@ -106,4 +110,14 @@ export default class NewClass extends cc.Component {
         return nearBoom;
     }
 
+    onCameraUpdate(camera: cc.Node) {
+
+    }
+
+    onPreUpdate(targetWorldPoint: cc.Vec2, cameraWorldPoint: cc.Vec2): boolean {
+        if (targetWorldPoint.y < cameraWorldPoint.y) {
+            return false;
+        }
+        return true;
+    }
 }
