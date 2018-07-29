@@ -28,7 +28,7 @@ export default class BoomFactory extends cc.Component {
 
     private maxGap: number = 200;
     private minGap: number = 100;
-    private rowGap:number = 30;
+    private rowGap: number = 30;
     private startY: number = 400;
 
     private nextRow: number = 0;
@@ -83,5 +83,15 @@ export default class BoomFactory extends cc.Component {
 
     private rowCount(): number {
         return 2;
+    }
+
+    isTop(boom: Boom): boolean {
+        return boom.row === this.nextRow - 1;
+    }
+
+    sortBooms(){
+        this.allBooms.sort((a, b)=>{
+            return a.y - b.y;
+        });
     }
 }

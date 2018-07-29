@@ -23,6 +23,9 @@ export default class NewClass extends cc.Component {
     @property(cc.Node)
     nodeCamera: cc.Node = null;
 
+    @property(cc.Node)
+    walls: cc.Node = null;
+
     private forcePower: number = 1000;
 
     private touch: boolean = false;
@@ -44,6 +47,7 @@ export default class NewClass extends cc.Component {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.boomFactory.startGame();
+        this.boomFactory.sortBooms();
     }
 
     onTouchStart() {
@@ -117,15 +121,34 @@ export default class NewClass extends cc.Component {
     }
 
     onCameraUpdate(camera: cc.Node) {
+        let changed = false;
         let cameraWorldPoint = camera.convertToWorldSpaceAR(cc.Vec2.ZERO);
+        let booms = this.boomFactory.allBooms;
+        let boom = booms[0];
+        let boomWorldPoint = boom.convertToWorldSpaceAR(cc.Vec2.ZERO);
         //最下层移除屏幕外之后返回对象池
-        for (const boom of this.boomFactory.allBooms) {
-            let boomWorldPoint = boom.convertToWorldSpaceAR(cc.Vec2.ZERO);
-            if (boomWorldPoint.y + cc.winSize.height/2 < cameraWorldPoint.y) {
-                cc.log("boom out");
-            }
+        if (boomWorldPoint.y + cc.winSize.height / 2 < cameraWorldPoint.y) {
+            cc.log("boom out");
+            this.boomFactory.destroyBoom(boom);
+            changed = true;
         }
         //最上层炸弹显示之后需要在创建一层
+        boom = booms[booms.length - 1];
+        boomWorldPoint = boom.convertToWorldSpaceAR(cc.Vec2.ZERO);
+        if (boomWorldPoint.y - cameraWorldPoint.y <= cc.winSize.height / 2) {
+            cc.log("add booms");
+            this.boomFactory.createRowBooms();
+            changed = true;
+        }
+        if (changed) {
+            this.boomFactory.sortBooms();
+        }
+        // for (const boom of this.boomFactory.allBooms) {
+
+        // }
+        this.walls.children.forEach((wall) => {
+            if (wall.name !== "bottom") wall.getComponent(cc.RigidBody).syncPosition(false);
+        })
     }
 
     onPreUpdate(targetWorldPoint: cc.Vec2, cameraWorldPoint: cc.Vec2): boolean {
