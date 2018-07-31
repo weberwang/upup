@@ -10,7 +10,7 @@ import Boom from "./boom";
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const { ccclass, property } = cc._decorator;
+const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class BoomFactory extends cc.Component {
@@ -46,11 +46,12 @@ export default class BoomFactory extends cc.Component {
 
     createRowBooms(): cc.Node {
         let count = this.rowCount();
-        let last;
+        let last: cc.Node;
         for (let index = 0; index < count; index++) {
             last = this.createBoom();
         }
         this.nextRow++;
+        cc.log("last y", last.y, this.nextRow)
         return last;
     }
 
@@ -66,15 +67,15 @@ export default class BoomFactory extends cc.Component {
     }
 
     private createBoom(): cc.Node {
-        if (this.boomPool.length > 0) return this.boomPool.pop();
-        let boom = cc.instantiate(this.pfbBoom);
+        let boom = this.boomPool.pop() || cc.instantiate(this.pfbBoom);
         boom.parent = this.boomContent;
         this.randomPosition(boom);
         return boom;
     }
 
-    private randomX(boom: cc.Node) {
-        boom.x = Math.round(Math.random() * (cc.winSize.width - boom.width) + boom.width / 2 - cc.winSize.width / 2);
+    private randomX(boom: cc.Node): void {
+        let randomWidth = cc.winSize.width * 0.7;
+        boom.x = Math.round(Math.random() * (randomWidth - boom.width) + boom.width / 2 - randomWidth / 2);
     }
 
     private randomHGap(): number {
@@ -82,15 +83,15 @@ export default class BoomFactory extends cc.Component {
     }
 
     private rowCount(): number {
-        return 2;
+        return 3;
     }
 
     isTop(boom: Boom): boolean {
         return boom.row === this.nextRow - 1;
     }
 
-    sortBooms(){
-        this.allBooms.sort((a, b)=>{
+    sortBooms() {
+        this.allBooms.sort((a, b) => {
             return a.y - b.y;
         });
     }

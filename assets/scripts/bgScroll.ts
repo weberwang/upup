@@ -8,10 +8,14 @@
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class NewClass extends cc.Component {
+
+    onLoad() {
+        this.node.setContentSize(cc.size(cc.winSize.width, cc.winSize.height * 2));
+    }
 
     onCameraUpdate(camera: cc.Node) {
         this.node.y = Math.floor(camera.y / cc.winSize.height) * cc.winSize.height - cc.winSize.height / 2;

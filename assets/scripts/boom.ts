@@ -40,4 +40,10 @@ export default class Boom extends cc.Component {
     onEndContact() {
         this.body.linearVelocity = cc.Vec2.ZERO;
     }
+
+    onCollisionEnter(other:cc.Collider, self:cc.Collider){
+        if(other.node.name === "ball"){
+            this.showWarn();
+        }
+    }
 }

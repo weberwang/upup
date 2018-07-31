@@ -38,6 +38,7 @@ export default class NewClass extends cc.Component {
 
     onLoad() {
         cc.director.getPhysicsManager().enabled = true;
+        cc.director.getCollisionManager().enabled = true;
         this.motorJoint = this.ballBody.getComponent(cc.MotorJoint);
         this.boomFactory = this.getComponent(BoomFactory);
         this.ball = this.ballBody.getComponent(Ball);
@@ -55,6 +56,7 @@ export default class NewClass extends cc.Component {
         this.touch = true;
         let nearBoom = this.findNearestBoom();
         if (!nearBoom) return;
+        nearBoom.getComponent(cc.CircleCollider).enabled = true;
         let body = nearBoom.getComponent(cc.RigidBody);
         body.active = true;
         this.motorJoint.connectedBody = body;
@@ -66,6 +68,7 @@ export default class NewClass extends cc.Component {
         if (this.isGameover) return;
         this.touch = false;
         if (!this.motorJoint.connectedBody) return;
+        this.motorJoint.connectedBody.getComponent(cc.CircleCollider).enabled = false;
         this.motorJoint.connectedBody.active = false;
         this.motorJoint.connectedBody.linearVelocity = cc.Vec2.ZERO;
         this.motorJoint.maxForce = 0;
@@ -105,11 +108,11 @@ export default class NewClass extends cc.Component {
             mRow = boom.getComponent(Boom).row;
             if (findRow == null) {
                 findRow = mRow
-            } else if (findRow - mRow > 1) {
+            } else if (findRow - mRow > 3) {
                 return nearBoom;
             }
             //不处理太近的
-            if (localPosition.y > this.ballBody.node.y && cc.pDistanceSQ(localPosition, this.ball.node.position) >= 200 * 200) {
+            if (localPosition.y > this.ballBody.node.y && cc.pDistanceSQ(localPosition, this.ball.node.position) >= 200 * 200 && cc.pAngle(localPosition, this.ball.node.position) >= 20 / 180 * Math.PI) {
                 mDis = cc.pDistanceSQ(localPosition, this.ballBody.node.position);
                 if (!distanceSQ || (distanceSQ && distanceSQ > mDis)) {
                     distanceSQ = mDis;
@@ -143,9 +146,6 @@ export default class NewClass extends cc.Component {
         if (changed) {
             this.boomFactory.sortBooms();
         }
-        // for (const boom of this.boomFactory.allBooms) {
-
-        // }
         this.walls.children.forEach((wall) => {
             if (wall.name !== "bottom") wall.getComponent(cc.RigidBody).syncPosition(false);
         })
